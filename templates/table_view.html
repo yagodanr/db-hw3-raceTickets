@@ -1,0 +1,51 @@
+{% extends "base.html" %}
+
+{% block title %}{{ table_view.title }} | Race Ticketing DB App{% endblock %}
+
+{% block content %}
+<section class="card">
+    <div class="page-header">
+        <div>
+            <h2>{{ table_view.title }}</h2>
+            <p class="muted">{{ table_view.description }}</p>
+        </div>
+        <a class="button secondary" href="/">Back to Dashboard</a>
+    </div>
+</section>
+
+<section class="card">
+    <h3>Available Table Views</h3>
+    <div class="nav" style="margin-top: 12px;">
+        {% for slug, item in table_views.items() %}
+        <a href="/tables/{{ slug }}">{{ item.title }}</a>
+        {% endfor %}
+    </div>
+</section>
+
+<section class="card">
+    {% if rows %}
+    <div class="table-wrap">
+        <table>
+            <thead>
+                <tr>
+                    {% for column in columns %}
+                    <th>{{ column }}</th>
+                    {% endfor %}
+                </tr>
+            </thead>
+            <tbody>
+                {% for row in rows %}
+                <tr>
+                    {% for column in columns %}
+                    <td>{{ row[column] }}</td>
+                    {% endfor %}
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+    {% else %}
+    <p class="muted">No rows found in this table view.</p>
+    {% endif %}
+</section>
+{% endblock %}

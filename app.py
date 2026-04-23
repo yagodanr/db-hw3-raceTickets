@@ -1,9 +1,124 @@
 import os
 
 import pymysql
-from flask import Flask, jsonify, render_template
+from flask import Flask, abort, jsonify, render_template
 
 app = Flask(__name__)
+
+TABLE_VIEWS = {
+    "brands": {
+        "title": "Brands",
+        "description": "Organizer brands participating in motorsport events.",
+        "query": """
+            SELECT
+                Name,
+                Logo
+            FROM Brand
+            ORDER BY Name
+        """,
+    },
+    "events": {
+        "title": "Race Events",
+        "description": "Race events stored in the core schedule.",
+        "query": """
+            SELECT
+                EventID,
+                Name,
+                Description,
+                Date,
+                Location
+            FROM RaceEvent
+            ORDER BY Date, EventID
+        """,
+    },
+    "brand-race-events": {
+        "title": "Brand to Race Event Links",
+        "description": "Junction table connecting brands with the events they organize or sponsor.",
+        "query": """
+            SELECT
+                bre.BrandName,
+                bre.EventID,
+                re.Name AS EventName,
+                re.Date AS EventDate
+            FROM Brand_RaceEvent bre
+            JOIN RaceEvent re
+              ON re.EventID = bre.EventID
+            ORDER BY bre.BrandName, bre.EventID
+        """,
+    },
+    "visitors": {
+        "title": "Visitors",
+        "description": "Ticket owners and potential buyers.",
+        "query": """
+            SELECT
+                passportID,
+                Name,
+                Email,
+                Phone
+            FROM Visitor
+            ORDER BY Name, passportID
+        """,
+    },
+    "staff": {
+        "title": "Ticketing Staff",
+        "description": "Staff members responsible for payment registration and ticket processing.",
+        "query": """
+            SELECT
+                passportID,
+                Name
+            FROM TicketingStaff
+            ORDER BY Name, passportID
+        """,
+    },
+    "payments": {
+        "title": "Payments",
+        "description": "Payment confirmations tied to visitors and staff members.",
+        "query": """
+            SELECT
+                p.PaymentID,
+                p.Status,
+                p.Amount,
+                p.ConfirmationDate,
+                p.VisitorPassportID,
+                v.Name AS VisitorName,
+                p.StaffPassportID,
+                ts.Name AS StaffName
+            FROM Payment p
+            JOIN Visitor v
+              ON v.passportID = p.VisitorPassportID
+            JOIN TicketingStaff ts
+              ON ts.passportID = p.StaffPassportID
+            ORDER BY p.PaymentID
+        """,
+    },
+    "tickets": {
+        "title": "Race Tickets",
+        "description": "Issued race tickets with ownership, event, and payment linkage.",
+        "query": """
+            SELECT
+                rt.TicketID,
+                rt.EventID,
+                re.Name AS EventName,
+                rt.Price,
+                rt.RegisteredAt,
+                rt.UsedAt,
+                rt.Status,
+                rt.OwnerPassportID,
+                v.Name AS OwnerName,
+                rt.PaymentID,
+                rt.RegisteredByStaffPassportID,
+                ts.Name AS StaffName
+            FROM RaceTicket rt
+            JOIN RaceEvent re
+              ON re.EventID = rt.EventID
+            JOIN Visitor v
+              ON v.passportID = rt.OwnerPassportID
+            JOIN TicketingStaff ts
+              ON ts.passportID = rt.RegisteredByStaffPassportID
+            ORDER BY rt.EventID, rt.TicketID
+        """,
+    },
+}
 
 
 def get_db_config():
@@ -69,6 +184,23 @@ def fetch_dashboard_data():
     }
 
 
+def fetch_table_rows(view_name):
+    table_view = TABLE_VIEWS.get(view_name)
+    if table_view is None:
+        abort(404)
+
+    conn = get_connection()
+    try:
+        with conn.cursor() as cursor:
+            cursor.execute(table_view["query"])
+            rows = cursor.fetchall()
+    finally:
+        conn.close()
+
+    columns = list(rows[0].keys()) if rows else []
+    return table_view, columns, rows
+
+
 @app.route("/")
 def home():
     dashboard = None
@@ -80,6 +212,19 @@ def home():
         db_error = str(exc)
 
     return render_template("home.html", dashboard=dashboard, db_error=db_error)
+
+
+@app.route("/tables/<view_name>")
+def table_view(view_name):
+    table_config, columns, rows = fetch_table_rows(view_name)
+    return render_template(
+        "table_view.html",
+        table_view=table_config,
+        view_name=view_name,
+        columns=columns,
+        rows=rows,
+        table_views=TABLE_VIEWS,
+    )
 
 
 @app.route("/db-status")
@@ -95,6 +240,7 @@ def db_status():
             "database": dashboard["metadata"]["db_name"],
             "mysql_version": dashboard["metadata"]["mysql_version"],
             "counts": dashboard["counts"],
+            "table_views": list(TABLE_VIEWS.keys()),
         }
     )
 

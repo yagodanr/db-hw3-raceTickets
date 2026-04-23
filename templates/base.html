@@ -117,6 +117,14 @@
             margin-bottom: 18px;
         }
 
+        .page-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 16px;
+            flex-wrap: wrap;
+        }
+
         .stat {
             display: flex;
             flex-direction: column;
@@ -161,11 +169,20 @@
             border-collapse: collapse;
         }
 
+        .table-wrap {
+            width: 100%;
+            overflow-x: auto;
+            border: 1px solid var(--line);
+            border-radius: 14px;
+            background: var(--surface);
+        }
+
         th,
         td {
             padding: 12px 10px;
             border-bottom: 1px solid var(--line);
             text-align: left;
+            white-space: nowrap;
         }
 
         th {
