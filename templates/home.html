@@ -1,0 +1,95 @@
+{% extends "base.html" %}
+
+{% block title %}Home | Race Ticketing DB App{% endblock %}
+
+{% block content %}
+{% if dashboard %}
+<section class="status ok">
+    <strong>Database connection is live.</strong>
+    Connected to <code>{{ dashboard.metadata.db_name }}</code> on MySQL {{ dashboard.metadata.mysql_version }}.
+</section>
+{% else %}
+<section class="status error">
+    <strong>Database connection failed.</strong>
+    <span>{{ db_error }}</span>
+</section>
+{% endif %}
+
+<section class="card">
+    <h2>Scope of This Draft</h2>
+    <p class="muted">
+        The baseline `jazz_app` includes full CRUD and reports. This first domain-specific draft keeps the
+        app smaller on purpose: it establishes the new styling, names, and database contract for the
+        motorsport ticketing schema before we add forms and reports.
+    </p>
+</section>
+
+{% if dashboard %}
+<section class="grid" style="margin-bottom: 18px;">
+    <article class="card stat">
+        <span class="stat-label">Brands</span>
+        <span class="stat-value">{{ dashboard.counts.brands }}</span>
+    </article>
+    <article class="card stat">
+        <span class="stat-label">Race Events</span>
+        <span class="stat-value">{{ dashboard.counts.events }}</span>
+    </article>
+    <article class="card stat">
+        <span class="stat-label">Visitors</span>
+        <span class="stat-value">{{ dashboard.counts.visitors }}</span>
+    </article>
+    <article class="card stat">
+        <span class="stat-label">Staff Members</span>
+        <span class="stat-value">{{ dashboard.counts.staff }}</span>
+    </article>
+    <article class="card stat">
+        <span class="stat-label">Payments</span>
+        <span class="stat-value">{{ dashboard.counts.payments }}</span>
+    </article>
+    <article class="card stat">
+        <span class="stat-label">Tickets</span>
+        <span class="stat-value">{{ dashboard.counts.tickets }}</span>
+    </article>
+</section>
+
+<section class="card">
+    <h2>Upcoming Event Snapshot</h2>
+    {% if dashboard.upcoming_events %}
+    <table>
+        <thead>
+            <tr>
+                <th>Event ID</th>
+                <th>Name</th>
+                <th>Date</th>
+                <th>Location</th>
+                <th>Tickets</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for event in dashboard.upcoming_events %}
+            <tr>
+                <td>{{ event.EventID }}</td>
+                <td>{{ event.Name }}</td>
+                <td>{{ event.Date }}</td>
+                <td>{{ event.Location or "Unknown" }}</td>
+                <td>{{ event.ticket_count }}</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+    {% else %}
+    <p class="muted">The connection works, but the database does not currently contain race events.</p>
+    {% endif %}
+</section>
+{% else %}
+<section class="card">
+    <h2>Connection Checklist</h2>
+    <p class="muted">Set these environment variables before starting the server:</p>
+    <p><code>DB_HOST</code>, <code>DB_PORT</code>, <code>DB_USER</code>, <code>DB_PASSWORD</code>, <code>DB_NAME</code></p>
+    <p class="muted">
+        The app defaults to <code>DB_NAME=RaceTicketingDB</code>. Once the credentials are correct,
+        reload the page or open <code>/db-status</code> to verify the connection.
+    </p>
+</section>
+{% endif %}
+{% endblock %}

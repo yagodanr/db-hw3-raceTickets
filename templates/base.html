@@ -1,0 +1,218 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}Race Ticketing DB App{% endblock %}</title>
+    <style>
+        :root {
+            --bg: #f4f1ea;
+            --surface: #fffaf2;
+            --surface-strong: #ffffff;
+            --text: #201a12;
+            --muted: #6f6558;
+            --accent: #c2410c;
+            --accent-dark: #9a3412;
+            --line: #e7dccb;
+            --ok: #166534;
+            --error: #b91c1c;
+            --shadow: 0 20px 50px rgba(69, 46, 18, 0.08);
+            --radius: 18px;
+        }
+
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            margin: 0;
+            font-family: "Trebuchet MS", "Segoe UI", sans-serif;
+            color: var(--text);
+            background:
+                radial-gradient(circle at top right, rgba(194, 65, 12, 0.18), transparent 30%),
+                linear-gradient(180deg, #f8f3ea 0%, #f4f1ea 100%);
+        }
+
+        .shell {
+            max-width: 1120px;
+            margin: 0 auto;
+            padding: 32px 20px 48px;
+        }
+
+        .hero,
+        .card {
+            background: var(--surface-strong);
+            border: 1px solid var(--line);
+            border-radius: var(--radius);
+            box-shadow: var(--shadow);
+        }
+
+        .hero {
+            padding: 28px;
+            margin-bottom: 22px;
+        }
+
+        .eyebrow {
+            margin: 0 0 8px;
+            color: var(--accent);
+            font-size: 13px;
+            font-weight: 700;
+            letter-spacing: 0.08em;
+            text-transform: uppercase;
+        }
+
+        h1, h2, h3, p {
+            margin-top: 0;
+        }
+
+        h1 {
+            margin-bottom: 10px;
+            font-size: 38px;
+            line-height: 1.05;
+        }
+
+        .hero-copy {
+            max-width: 780px;
+            color: var(--muted);
+            font-size: 16px;
+            line-height: 1.55;
+        }
+
+        .nav {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+            margin-top: 18px;
+        }
+
+        .nav a,
+        .button {
+            display: inline-block;
+            padding: 11px 16px;
+            border-radius: 999px;
+            text-decoration: none;
+            font-weight: 700;
+            color: #fff;
+            background: var(--accent);
+        }
+
+        .nav a:hover,
+        .button:hover {
+            background: var(--accent-dark);
+        }
+
+        .button.secondary {
+            color: var(--text);
+            background: #efe4d4;
+        }
+
+        .grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+            gap: 16px;
+        }
+
+        .card {
+            padding: 22px;
+            margin-bottom: 18px;
+        }
+
+        .stat {
+            display: flex;
+            flex-direction: column;
+            gap: 6px;
+            min-height: 110px;
+            justify-content: center;
+            background: var(--surface);
+        }
+
+        .stat-label {
+            color: var(--muted);
+            font-size: 14px;
+        }
+
+        .stat-value {
+            font-size: 34px;
+            font-weight: 700;
+        }
+
+        .status {
+            padding: 14px 16px;
+            border-radius: 14px;
+            border: 1px solid var(--line);
+            background: #f7f1e8;
+            margin-bottom: 18px;
+        }
+
+        .status.ok {
+            border-color: rgba(22, 101, 52, 0.2);
+            color: var(--ok);
+            background: rgba(22, 101, 52, 0.08);
+        }
+
+        .status.error {
+            border-color: rgba(185, 28, 28, 0.2);
+            color: var(--error);
+            background: rgba(185, 28, 28, 0.08);
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        th,
+        td {
+            padding: 12px 10px;
+            border-bottom: 1px solid var(--line);
+            text-align: left;
+        }
+
+        th {
+            color: var(--muted);
+            font-size: 13px;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+        }
+
+        .muted {
+            color: var(--muted);
+        }
+
+        code {
+            background: #f4e7d6;
+            border-radius: 6px;
+            padding: 2px 6px;
+        }
+
+        @media (max-width: 640px) {
+            h1 {
+                font-size: 30px;
+            }
+
+            .shell {
+                padding: 20px 14px 40px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="shell">
+        <section class="hero">
+            <p class="eyebrow">HW3 Draft Application</p>
+            <h1>Motorsport Race Ticketing DB System</h1>
+            <p class="hero-copy">
+                First implementation draft for the HW3 domain. This version focuses on one thing:
+                starting the Flask server and proving a live connection to the MySQL schema
+                <code>RaceTicketingDB</code>.
+            </p>
+            <nav class="nav">
+                <a href="/">Dashboard</a>
+                <a href="/db-status">DB Status JSON</a>
+            </nav>
+        </section>
+
+        {% block content %}{% endblock %}
+    </div>
+</body>
+</html>
