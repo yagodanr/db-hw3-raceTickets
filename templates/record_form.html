@@ -1,0 +1,66 @@
+{% extends "base.html" %}
+
+{% block title %}Edit {{ table_view.title }} | Race Ticketing DB App{% endblock %}
+
+{% block content %}
+<section class="card">
+    <div class="page-header">
+        <div>
+            <h2>Edit {{ table_view.title }} Entry</h2>
+            <p class="muted">Update the selected row in {{ table_view.db_table }}.</p>
+        </div>
+        <a class="button secondary" href="{{ url_for('table_view', view_name=view_name) }}">Back to Table</a>
+    </div>
+</section>
+
+<section class="card">
+    <h3>Available Table Views</h3>
+    <div class="nav" style="margin-top: 12px;">
+        {% for slug, item in table_views.items() %}
+        <a href="{{ url_for('table_view', view_name=slug) }}">{{ item.title }}</a>
+        {% endfor %}
+    </div>
+</section>
+
+<section class="card">
+    <form method="post" action="{{ url_for('update_entry', view_name=view_name) }}">
+        {% for pk_column, pk_value in original_key.items() %}
+        <input type="hidden" name="original__{{ pk_column }}" value="{{ pk_value }}">
+        {% endfor %}
+
+        <div class="form-grid">
+            {% for field in table_view.fields %}
+            {% if not field.auto_increment %}
+            <div class="field {% if field.type == 'textarea' %}full{% endif %}">
+                <label for="edit-{{ field.name }}">{{ field.label }}</label>
+                {% if field.type == 'textarea' %}
+                <textarea id="edit-{{ field.name }}" name="{{ field.name }}">{{ format_value_for_form(field, form_values.get(field.name)) }}</textarea>
+                {% elif field.type == 'select' %}
+                <select id="edit-{{ field.name }}" name="{{ field.name }}" {% if field.required %}required{% endif %}>
+                    <option value="">Select...</option>
+                    {% for option in form_options.get(field.name, []) %}
+                    <option value="{{ option.value }}" {% if option.value == format_value_for_form(field, form_values.get(field.name)) %}selected{% endif %}>{{ option.label }}</option>
+                    {% endfor %}
+                </select>
+                {% else %}
+                <input
+                    id="edit-{{ field.name }}"
+                    name="{{ field.name }}"
+                    type="{{ 'number' if field.type in ['integer', 'decimal'] else field.type }}"
+                    value="{{ format_value_for_form(field, form_values.get(field.name)) }}"
+                    {% if field.type == 'decimal' %}step="0.01"{% endif %}
+                    {% if field.required %}required{% endif %}
+                >
+                {% endif %}
+            </div>
+            {% endif %}
+            {% endfor %}
+        </div>
+
+        <div class="actions" style="margin-top: 18px;">
+            <button class="button" type="submit">Save Changes</button>
+            <a class="button secondary" href="{{ url_for('table_view', view_name=view_name) }}">Cancel</a>
+        </div>
+    </form>
+</section>
+{% endblock %}

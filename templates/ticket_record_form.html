@@ -1,0 +1,102 @@
+{% extends "base.html" %}
+
+{% block title %}Ticket Record | Race Ticketing DB App{% endblock %}
+
+{% block content %}
+<section class="card">
+    <div class="page-header">
+        <div>
+            <h2>Document C: Ticket Record</h2>
+            <p class="muted">Updates or deletes rows in <code>RaceTicket</code>.</p>
+        </div>
+        <a class="button secondary" href="{{ url_for('forms_home') }}">Back to Forms</a>
+    </div>
+</section>
+
+<section class="card note">
+    <strong>Schema mapping:</strong>
+    <span class="muted">There is no separate <code>TicketRecord</code> table in the deployed schema. This form uses the existing <code>RaceTicket</code> tuple as the record, keyed by <code>(TicketID, EventID)</code>, with <code>RegisteredAt</code> acting as the creation timestamp.</span>
+</section>
+
+<section class="card">
+    <h3>Update Ticket Record</h3>
+    <form method="post" action="{{ url_for('update_ticket_record') }}">
+        <div class="form-grid">
+            <div class="field">
+                <label>Ticket ID</label>
+                <input type="text" name="ticket_id" required>
+            </div>
+            <div class="field">
+                <label>Event ID</label>
+                <input type="number" name="event_id" required>
+            </div>
+            <div class="field">
+                <label>Status</label>
+                <select name="status" required>
+                    <option value="Registered">Registered</option>
+                    <option value="Used">Used</option>
+                    <option value="Cancelled">Cancelled</option>
+                </select>
+            </div>
+            <div class="field">
+                <label>Used At</label>
+                <input type="datetime-local" name="used_at">
+            </div>
+        </div>
+        <div class="actions" style="margin-top: 18px;">
+            <button class="button" type="submit">Update Ticket Record</button>
+        </div>
+    </form>
+</section>
+
+<section class="card">
+    <h3>Delete Ticket Record</h3>
+    <form method="post" action="{{ url_for('delete_ticket_record') }}">
+        <div class="form-grid">
+            <div class="field">
+                <label>Ticket ID</label>
+                <input type="text" name="ticket_id" required>
+            </div>
+            <div class="field">
+                <label>Event ID</label>
+                <input type="number" name="event_id" required>
+            </div>
+        </div>
+        <div class="actions" style="margin-top: 18px;">
+            <button class="button danger" type="submit" onclick="return confirm('Delete this ticket record?');">Delete Ticket Record</button>
+        </div>
+    </form>
+</section>
+
+<section class="card">
+    <h3>Current Ticket Records</h3>
+    <div class="table-wrap">
+        <table>
+            <thead>
+                <tr>
+                    <th>TicketID</th>
+                    <th>Event</th>
+                    <th>Status</th>
+                    <th>RegisteredAt</th>
+                    <th>UsedAt</th>
+                    <th>Owner</th>
+                    <th>Payment</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for row in data.records %}
+                <tr>
+                    <td>{{ row.TicketID }}</td>
+                    <td>{{ row.EventName }} ({{ row.EventID }})</td>
+                    <td>{{ row.Status }}</td>
+                    <td>{{ row.RegisteredAt }}</td>
+                    <td>{{ row.UsedAt }}</td>
+                    <td>{{ row.OwnerName }} ({{ row.OwnerPassportID }})</td>
+                    <td>{{ row.PaymentID }}</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</section>
+{% endblock %}

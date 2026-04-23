@@ -1,0 +1,142 @@
+{% extends "base.html" %}
+
+{% block title %}Payment Confirmation | Race Ticketing DB App{% endblock %}
+
+{% block content %}
+<section class="card">
+    <div class="page-header">
+        <div>
+            <h2>Document A: Payment Confirmation</h2>
+            <p class="muted">Adds and updates rows in <code>Payment</code>.</p>
+        </div>
+        <a class="button secondary" href="{{ url_for('forms_home') }}">Back to Forms</a>
+    </div>
+</section>
+
+<section class="card note">
+    <strong>Schema mapping:</strong>
+    <span class="muted">The live database stores status, amount, confirmation date, visitor, and staff. The input document field <code>transaction_id</code> is not present in the deployed schema.</span>
+</section>
+
+<section class="card">
+    <h3>Add Payment Confirmation</h3>
+    <form method="post" action="{{ url_for('create_payment_confirmation') }}">
+        <div class="form-grid">
+            <div class="field">
+                <label>Status</label>
+                <select name="status" required>
+                    <option value="Confirmed">Confirmed</option>
+                    <option value="Failed">Failed</option>
+                </select>
+            </div>
+            <div class="field">
+                <label>Amount</label>
+                <input type="number" name="amount" step="0.01" required>
+            </div>
+            <div class="field">
+                <label>Confirmation Date</label>
+                <input type="datetime-local" name="confirmation_date">
+            </div>
+            <div class="field">
+                <label>Visitor</label>
+                <select name="visitor_passport_id" required>
+                    <option value="">Select...</option>
+                    {% for option in data.visitors %}
+                    <option value="{{ option.value }}">{{ option.label }}</option>
+                    {% endfor %}
+                </select>
+            </div>
+            <div class="field">
+                <label>Ticketing Staff</label>
+                <select name="staff_passport_id" required>
+                    <option value="">Select...</option>
+                    {% for option in data.staff_members %}
+                    <option value="{{ option.value }}">{{ option.label }}</option>
+                    {% endfor %}
+                </select>
+            </div>
+        </div>
+        <div class="actions" style="margin-top: 18px;">
+            <button class="button" type="submit">Add Payment</button>
+        </div>
+    </form>
+</section>
+
+<section class="card">
+    <h3>Update Payment Confirmation</h3>
+    <form method="post" action="{{ url_for('update_payment_confirmation') }}">
+        <div class="form-grid">
+            <div class="field">
+                <label>Payment ID</label>
+                <input type="number" name="payment_id" required>
+            </div>
+            <div class="field">
+                <label>Status</label>
+                <select name="status" required>
+                    <option value="Confirmed">Confirmed</option>
+                    <option value="Failed">Failed</option>
+                </select>
+            </div>
+            <div class="field">
+                <label>Amount</label>
+                <input type="number" name="amount" step="0.01" required>
+            </div>
+            <div class="field">
+                <label>Confirmation Date</label>
+                <input type="datetime-local" name="confirmation_date">
+            </div>
+            <div class="field">
+                <label>Visitor</label>
+                <select name="visitor_passport_id" required>
+                    <option value="">Select...</option>
+                    {% for option in data.visitors %}
+                    <option value="{{ option.value }}">{{ option.label }}</option>
+                    {% endfor %}
+                </select>
+            </div>
+            <div class="field">
+                <label>Ticketing Staff</label>
+                <select name="staff_passport_id" required>
+                    <option value="">Select...</option>
+                    {% for option in data.staff_members %}
+                    <option value="{{ option.value }}">{{ option.label }}</option>
+                    {% endfor %}
+                </select>
+            </div>
+        </div>
+        <div class="actions" style="margin-top: 18px;">
+            <button class="button" type="submit">Update Payment</button>
+        </div>
+    </form>
+</section>
+
+<section class="card">
+    <h3>Recent Payment Rows</h3>
+    <div class="table-wrap">
+        <table>
+            <thead>
+                <tr>
+                    <th>PaymentID</th>
+                    <th>Status</th>
+                    <th>Amount</th>
+                    <th>ConfirmationDate</th>
+                    <th>Visitor</th>
+                    <th>Staff</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for row in data.payments %}
+                <tr>
+                    <td>{{ row.PaymentID }}</td>
+                    <td>{{ row.Status }}</td>
+                    <td>{{ row.Amount }}</td>
+                    <td>{{ row.ConfirmationDate }}</td>
+                    <td>{{ row.VisitorName }} ({{ row.VisitorPassportID }})</td>
+                    <td>{{ row.StaffName }} ({{ row.StaffPassportID }})</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</section>
+{% endblock %}

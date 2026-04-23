@@ -1,0 +1,121 @@
+{% extends "base.html" %}
+
+{% block title %}Printed Ticket | Race Ticketing DB App{% endblock %}
+
+{% block content %}
+<section class="card">
+    <div class="page-header">
+        <div>
+            <h2>Document B: Ticket / Printed Ticket</h2>
+            <p class="muted">Issues a new row in <code>RaceTicket</code>.</p>
+        </div>
+        <a class="button secondary" href="{{ url_for('forms_home') }}">Back to Forms</a>
+    </div>
+</section>
+
+<section class="card note">
+    <strong>Schema mapping:</strong>
+    <span class="muted">The current schema stores ticket id, race, owner, payment, price, registration time, and staff. Document fields <code>seat_number</code> and <code>ticket_type</code> are not present in the deployed table, and race date is derived from the selected event.</span>
+</section>
+
+<section class="card">
+    <h3>Issue Printed Ticket</h3>
+    <form method="post" action="{{ url_for('create_printed_ticket') }}">
+        <div class="form-grid">
+            <div class="field">
+                <label>Ticket ID</label>
+                <input type="text" name="ticket_id" required>
+            </div>
+            <div class="field">
+                <label>Race Event</label>
+                <select name="event_id" required>
+                    <option value="">Select...</option>
+                    {% for option in data.events %}
+                    <option value="{{ option.value }}">{{ option.label }}</option>
+                    {% endfor %}
+                </select>
+            </div>
+            <div class="field">
+                <label>Visitor</label>
+                <select name="owner_passport_id" required>
+                    <option value="">Select...</option>
+                    {% for option in data.visitors %}
+                    <option value="{{ option.value }}">{{ option.label }}</option>
+                    {% endfor %}
+                </select>
+            </div>
+            <div class="field">
+                <label>Payment</label>
+                <select name="payment_id" required>
+                    <option value="">Select...</option>
+                    {% for option in data.available_payments %}
+                    <option value="{{ option.value }}">{{ option.label }}</option>
+                    {% endfor %}
+                </select>
+            </div>
+            <div class="field">
+                <label>Registered By Staff</label>
+                <select name="staff_passport_id" required>
+                    <option value="">Select...</option>
+                    {% for option in data.staff_members %}
+                    <option value="{{ option.value }}">{{ option.label }}</option>
+                    {% endfor %}
+                </select>
+            </div>
+            <div class="field">
+                <label>Price</label>
+                <input type="number" name="price" step="0.01" required>
+            </div>
+            <div class="field">
+                <label>Issue Date</label>
+                <input type="datetime-local" name="registered_at">
+            </div>
+            <div class="field">
+                <label>Status</label>
+                <select name="status">
+                    <option value="Registered">Registered</option>
+                    <option value="Used">Used</option>
+                    <option value="Cancelled">Cancelled</option>
+                </select>
+            </div>
+        </div>
+        <div class="actions" style="margin-top: 18px;">
+            <button class="button" type="submit">Issue Ticket</button>
+        </div>
+    </form>
+</section>
+
+<section class="card">
+    <h3>Recent Ticket Rows</h3>
+    <div class="table-wrap">
+        <table>
+            <thead>
+                <tr>
+                    <th>TicketID</th>
+                    <th>Event</th>
+                    <th>Price</th>
+                    <th>RegisteredAt</th>
+                    <th>UsedAt</th>
+                    <th>Status</th>
+                    <th>Owner</th>
+                    <th>Payment</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for row in data.tickets %}
+                <tr>
+                    <td>{{ row.TicketID }}</td>
+                    <td>{{ row.EventName }} ({{ row.EventID }})</td>
+                    <td>{{ row.Price }}</td>
+                    <td>{{ row.RegisteredAt }}</td>
+                    <td>{{ row.UsedAt }}</td>
+                    <td>{{ row.Status }}</td>
+                    <td>{{ row.OwnerName }} ({{ row.OwnerPassportID }})</td>
+                    <td>{{ row.PaymentID }}</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</section>
+{% endblock %}

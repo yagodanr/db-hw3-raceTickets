@@ -1,0 +1,96 @@
+{% extends "base.html" %}
+
+{% block title %}Brand Profile | Race Ticketing DB App{% endblock %}
+
+{% block content %}
+<section class="card">
+    <div class="page-header">
+        <div>
+            <h2>Additional Form: Brand Profile</h2>
+            <p class="muted">Used to demonstrate cascade update and cascade delete through <code>Brand_RaceEvent</code>.</p>
+        </div>
+        <a class="button secondary" href="{{ url_for('forms_home') }}">Back to Forms</a>
+    </div>
+</section>
+
+<section class="card">
+    <h3>Add Brand</h3>
+    <form method="post" action="{{ url_for('create_brand_profile') }}">
+        <div class="form-grid">
+            <div class="field">
+                <label>Name</label>
+                <input type="text" name="name" required>
+            </div>
+            <div class="field">
+                <label>Logo</label>
+                <input type="text" name="logo">
+            </div>
+        </div>
+        <div class="actions" style="margin-top: 18px;">
+            <button class="button" type="submit">Add Brand</button>
+        </div>
+    </form>
+</section>
+
+<section class="card">
+    <h3>Update Brand Name</h3>
+    <form method="post" action="{{ url_for('update_brand_profile') }}">
+        <div class="form-grid">
+            <div class="field">
+                <label>Original Name</label>
+                <input type="text" name="original_name" required>
+            </div>
+            <div class="field">
+                <label>New Name</label>
+                <input type="text" name="new_name" required>
+            </div>
+            <div class="field">
+                <label>Logo</label>
+                <input type="text" name="logo">
+            </div>
+        </div>
+        <div class="actions" style="margin-top: 18px;">
+            <button class="button" type="submit">Update Brand</button>
+        </div>
+    </form>
+</section>
+
+<section class="card">
+    <h3>Delete Brand</h3>
+    <form method="post" action="{{ url_for('delete_brand_profile') }}">
+        <div class="form-grid">
+            <div class="field">
+                <label>Name</label>
+                <input type="text" name="name" required>
+            </div>
+        </div>
+        <div class="actions" style="margin-top: 18px;">
+            <button class="button danger" type="submit" onclick="return confirm('Delete this brand and cascade linked junction rows?');">Delete Brand</button>
+        </div>
+    </form>
+</section>
+
+<section class="card">
+    <h3>Current Brands</h3>
+    <div class="table-wrap">
+        <table>
+            <thead>
+                <tr>
+                    <th>Name</th>
+                    <th>Logo</th>
+                    <th>Linked Events</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for row in data.brands %}
+                <tr>
+                    <td>{{ row.Name }}</td>
+                    <td>{{ row.Logo }}</td>
+                    <td>{{ row.linked_events }}</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</section>
+{% endblock %}

@@ -1,0 +1,89 @@
+{% extends "base.html" %}
+
+{% block title %}Form Documentation | Race Ticketing DB App{% endblock %}
+
+{% block content %}
+<section class="card">
+    <div class="page-header">
+        <div>
+            <h2>Form Documentation</h2>
+            <p class="muted">Queries and before/after table states generated from transaction-safe examples on the live schema.</p>
+        </div>
+        <a class="button secondary" href="{{ url_for('forms_home') }}">Back to Forms</a>
+    </div>
+</section>
+
+{% for doc in docs %}
+<section class="card">
+    <h3>{{ doc.form_title }}</h3>
+    <p class="muted">{{ doc.mapping_note }}</p>
+    {% for operation in doc.operations %}
+    <div class="card" style="background: var(--surface); margin-top: 18px;">
+        <h3>{{ operation.title }}</h3>
+        <p class="muted">Executed by the following query or query sequence:</p>
+        {% for query in operation.sql %}
+        <pre>{{ query }}</pre>
+        {% endfor %}
+
+        <p class="muted" style="margin-top: 18px;">Before operation:</p>
+        {% for table in operation.before_tables %}
+        <h4>{{ table.name }}</h4>
+        {% if table.rows %}
+        <div class="table-wrap">
+            <table>
+                <thead>
+                    <tr>
+                        {% for column in table.rows[0].keys() %}
+                        <th>{{ column }}</th>
+                        {% endfor %}
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for row in table.rows %}
+                    <tr>
+                        {% for value in row.values() %}
+                        <td>{{ value }}</td>
+                        {% endfor %}
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+        {% else %}
+        <p class="muted">No matching rows.</p>
+        {% endif %}
+        {% endfor %}
+
+        <p class="muted" style="margin-top: 18px;">After operation:</p>
+        {% for table in operation.after_tables %}
+        <h4>{{ table.name }}</h4>
+        {% if table.rows %}
+        <div class="table-wrap">
+            <table>
+                <thead>
+                    <tr>
+                        {% for column in table.rows[0].keys() %}
+                        <th>{{ column }}</th>
+                        {% endfor %}
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for row in table.rows %}
+                    <tr>
+                        {% for value in row.values() %}
+                        <td>{{ value }}</td>
+                        {% endfor %}
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+        {% else %}
+        <p class="muted">No matching rows.</p>
+        {% endif %}
+        {% endfor %}
+    </div>
+    {% endfor %}
+</section>
+{% endfor %}
+{% endblock %}

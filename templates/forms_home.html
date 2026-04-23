@@ -1,0 +1,39 @@
+{% extends "base.html" %}
+
+{% block title %}Assignment Forms | Race Ticketing DB App{% endblock %}
+
+{% block content %}
+<section class="card">
+    <h2>Assignment Forms</h2>
+    <p class="muted">
+        These forms are built for the coursework documents and execute add, update, and delete
+        operations directly against the MySQL database.
+    </p>
+    <div class="nav" style="margin-top: 12px;">
+        <a href="{{ url_for('payment_confirmation_form') }}">Payment Confirmation</a>
+        <a href="{{ url_for('printed_ticket_form') }}">Printed Ticket</a>
+        <a href="{{ url_for('ticket_record_form') }}">Ticket Record</a>
+        <a href="{{ url_for('brand_profile_form') }}">Brand Profile</a>
+        <a href="{{ url_for('forms_documentation') }}">Documentation</a>
+    </div>
+</section>
+
+<section class="grid">
+    <article class="card">
+        <h3>Document A</h3>
+        <p class="muted">Create and update payment confirmations in <code>Payment</code>.</p>
+    </article>
+    <article class="card">
+        <h3>Document B</h3>
+        <p class="muted">Issue printed tickets in <code>RaceTicket</code> using valid foreign keys.</p>
+    </article>
+    <article class="card">
+        <h3>Document C</h3>
+        <p class="muted">Update ticket status or delete a ticket record by composite key.</p>
+    </article>
+    <article class="card">
+        <h3>Cascade Demo</h3>
+        <p class="muted">Maintain brands and demonstrate cascade update/delete through <code>Brand_RaceEvent</code>.</p>
+    </article>
+</section>
+{% endblock %}

@@ -9,7 +9,7 @@
             <h2>{{ table_view.title }}</h2>
             <p class="muted">{{ table_view.description }}</p>
         </div>
-        <a class="button secondary" href="/">Back to Dashboard</a>
+        <a class="button secondary" href="{{ url_for('home') }}">Back to Dashboard</a>
     </div>
 </section>
 
@@ -17,12 +17,60 @@
     <h3>Available Table Views</h3>
     <div class="nav" style="margin-top: 12px;">
         {% for slug, item in table_views.items() %}
-        <a href="/tables/{{ slug }}">{{ item.title }}</a>
+        <a href="{{ url_for('table_view', view_name=slug) }}">{{ item.title }}</a>
         {% endfor %}
     </div>
 </section>
 
 <section class="card">
+    <div class="page-header">
+        <div>
+            <h3>Add New Entry</h3>
+            <p class="muted">Submit a new row directly into {{ table_view.db_table }}.</p>
+        </div>
+    </div>
+    <form method="post" action="{{ url_for('create_entry', view_name=view_name) }}">
+        <div class="form-grid">
+            {% for field in table_view.fields %}
+            {% if not field.auto_increment %}
+            <div class="field {% if field.type == 'textarea' %}full{% endif %}">
+                <label for="create-{{ field.name }}">{{ field.label }}</label>
+                {% if field.type == 'textarea' %}
+                <textarea id="create-{{ field.name }}" name="{{ field.name }}">{{ format_value_for_form(field, form_values.get(field.name)) }}</textarea>
+                {% elif field.type == 'select' %}
+                <select id="create-{{ field.name }}" name="{{ field.name }}" {% if field.required %}required{% endif %}>
+                    <option value="">Select...</option>
+                    {% for option in form_options.get(field.name, []) %}
+                    <option value="{{ option.value }}">{{ option.label }}</option>
+                    {% endfor %}
+                </select>
+                {% else %}
+                <input
+                    id="create-{{ field.name }}"
+                    name="{{ field.name }}"
+                    type="{{ 'number' if field.type in ['integer', 'decimal'] else field.type }}"
+                    value="{{ format_value_for_form(field, form_values.get(field.name)) }}"
+                    {% if field.type == 'decimal' %}step="0.01"{% endif %}
+                    {% if field.required %}required{% endif %}
+                >
+                {% endif %}
+            </div>
+            {% endif %}
+            {% endfor %}
+        </div>
+        <div class="actions" style="margin-top: 18px;">
+            <button class="button" type="submit">Create Entry</button>
+        </div>
+    </form>
+</section>
+
+<section class="card">
+    <div class="page-header">
+        <div>
+            <h3>Existing Rows</h3>
+            <p class="muted">Edit or delete records using the actions on each row.</p>
+        </div>
+    </div>
     {% if rows %}
     <div class="table-wrap">
         <table>
@@ -31,6 +79,7 @@
                     {% for column in columns %}
                     <th>{{ column }}</th>
                     {% endfor %}
+                    <th>Actions</th>
                 </tr>
             </thead>
             <tbody>
@@ -39,13 +88,24 @@
                     {% for column in columns %}
                     <td>{{ row[column] }}</td>
                     {% endfor %}
+                    <td>
+                        <div class="actions">
+                            <a class="button secondary small" href="{{ url_for('edit_entry', view_name=view_name) }}?{{ build_row_query(table_view, row) }}">Edit</a>
+                            <form class="inline-form" method="post" action="{{ url_for('delete_entry', view_name=view_name) }}">
+                                {% for pk_column in table_view.primary_key %}
+                                <input type="hidden" name="{{ pk_column }}" value="{{ row[pk_column] }}">
+                                {% endfor %}
+                                <button class="button danger small" type="submit" onclick="return confirm('Delete this row?');">Delete</button>
+                            </form>
+                        </div>
+                    </td>
                 </tr>
                 {% endfor %}
             </tbody>
         </table>
     </div>
     {% else %}
-    <p class="muted">No rows found in this table view.</p>
+    <p class="muted">No rows found in this table view yet.</p>
     {% endif %}
 </section>
 {% endblock %}

@@ -101,9 +101,24 @@
             background: var(--accent-dark);
         }
 
+        button.button {
+            border: 0;
+            cursor: pointer;
+            font: inherit;
+        }
+
         .button.secondary {
             color: var(--text);
             background: #efe4d4;
+        }
+
+        .button.danger {
+            background: #b91c1c;
+        }
+
+        .button.small {
+            padding: 8px 12px;
+            font-size: 14px;
         }
 
         .grid {
@@ -196,6 +211,78 @@
             color: var(--muted);
         }
 
+        .note {
+            padding: 14px 16px;
+            border-radius: 14px;
+            border: 1px solid var(--line);
+            background: var(--surface);
+        }
+
+        .flash-stack {
+            display: grid;
+            gap: 10px;
+            margin-bottom: 18px;
+        }
+
+        .form-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+            gap: 16px;
+        }
+
+        .field {
+            display: grid;
+            gap: 8px;
+        }
+
+        .field.full {
+            grid-column: 1 / -1;
+        }
+
+        .field label {
+            font-size: 14px;
+            font-weight: 700;
+        }
+
+        .field input,
+        .field select,
+        .field textarea {
+            width: 100%;
+            padding: 11px 12px;
+            border: 1px solid var(--line);
+            border-radius: 12px;
+            background: #fffdf8;
+            color: var(--text);
+            font: inherit;
+        }
+
+        .field textarea {
+            min-height: 120px;
+            resize: vertical;
+        }
+
+        .actions {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+            align-items: center;
+        }
+
+        .inline-form {
+            display: inline;
+        }
+
+        pre {
+            margin: 0;
+            padding: 14px 16px;
+            overflow-x: auto;
+            border-radius: 14px;
+            border: 1px solid var(--line);
+            background: #f7f1e8;
+            font-size: 13px;
+            line-height: 1.45;
+        }
+
         code {
             background: #f4e7d6;
             border-radius: 6px;
@@ -225,9 +312,21 @@
             </p>
             <nav class="nav">
                 <a href="/">Dashboard</a>
+                <a href="/forms">Assignment Forms</a>
+                <a href="/forms/documentation">Form Documentation</a>
                 <a href="/db-status">DB Status JSON</a>
             </nav>
         </section>
+
+        {% with messages = get_flashed_messages(with_categories=true) %}
+        {% if messages %}
+        <div class="flash-stack">
+            {% for category, message in messages %}
+            <section class="status {{ category }}">{{ message }}</section>
+            {% endfor %}
+        </div>
+        {% endif %}
+        {% endwith %}
 
         {% block content %}{% endblock %}
     </div>
