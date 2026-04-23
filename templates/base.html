@@ -298,6 +298,32 @@
                 padding: 20px 14px 40px;
             }
         }
+
+        @media print {
+            body {
+                background: #fff;
+            }
+
+            .shell {
+                max-width: none;
+                padding: 0;
+            }
+
+            .hero,
+            .nav,
+            .flash-stack,
+            button,
+            .button {
+                display: none !important;
+            }
+
+            .card,
+            .table-wrap,
+            pre {
+                box-shadow: none;
+                border-color: #d1c4af;
+            }
+        }
     </style>
 </head>
 <body>
@@ -314,6 +340,8 @@
                 <a href="/">Dashboard</a>
                 <a href="/forms">Assignment Forms</a>
                 <a href="/forms/documentation">Form Documentation</a>
+                <a href="/reports">Assignment Reports</a>
+                <a href="/reports/documentation">Report Documentation</a>
                 <a href="/db-status">DB Status JSON</a>
             </nav>
         </section>

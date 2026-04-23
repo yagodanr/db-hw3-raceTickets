@@ -1,0 +1,85 @@
+{% extends "base.html" %}
+
+{% block title %}Report Documentation | Race Ticketing DB App{% endblock %}
+
+{% block content %}
+<section class="card">
+    <div class="page-header">
+        <div>
+            <h2>Report Documentation</h2>
+            <p class="muted">Query pipelines and current printouts generated from the live schema for Step 8.</p>
+        </div>
+        <a class="button secondary" href="{{ url_for('reports_home') }}">Back to Reports</a>
+    </div>
+</section>
+
+{% for doc in docs %}
+<section class="card">
+    <h3>{{ doc.title }}</h3>
+    <p class="muted"><strong>Output document:</strong> {{ doc.document_name }}</p>
+    <p class="muted">{{ doc.description }}</p>
+
+    {% for query in doc.queries %}
+    <div class="card" style="background: var(--surface); margin-top: 18px;">
+        <pre>{{ query.sql }}</pre>
+    </div>
+    {% endfor %}
+
+    <div class="card" style="background: var(--surface); margin-top: 18px;">
+        <h3>{{ doc.summary_title }}</h3>
+        {% if doc.summary_rows %}
+        <div class="table-wrap">
+            <table>
+                <thead>
+                    <tr>
+                        {% for column in doc.summary_rows[0].keys() %}
+                        <th>{{ column }}</th>
+                        {% endfor %}
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for row in doc.summary_rows %}
+                    <tr>
+                        {% for value in row.values() %}
+                        <td>{{ value }}</td>
+                        {% endfor %}
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+        {% else %}
+        <p class="muted">No summary rows.</p>
+        {% endif %}
+    </div>
+
+    <div class="card" style="background: var(--surface); margin-top: 18px;">
+        <h3>{{ doc.detail_title }}</h3>
+        {% if doc.detail_rows %}
+        <div class="table-wrap">
+            <table>
+                <thead>
+                    <tr>
+                        {% for column in doc.detail_rows[0].keys() %}
+                        <th>{{ column }}</th>
+                        {% endfor %}
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for row in doc.detail_rows %}
+                    <tr>
+                        {% for value in row.values() %}
+                        <td>{{ value }}</td>
+                        {% endfor %}
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+        {% else %}
+        <p class="muted">No detail rows.</p>
+        {% endif %}
+    </div>
+</section>
+{% endfor %}
+{% endblock %}
